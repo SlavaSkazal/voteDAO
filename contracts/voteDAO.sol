@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
-//pragma solidity ^0.6.6;
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.0;
 //pragma ton-solidity ^0.47.0;
 
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 //import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "@openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
 
-
-contract voteDAO { //is ERC20 {
+contract voteDAO is ERC20 {
     
     uint minQuorum;
     address chairPerson;
@@ -49,7 +46,7 @@ contract voteDAO { //is ERC20 {
     function deposit(uint amount) public{
         require(amount > 0);
         balances[msg.sender] += amount;
-        //transferFrom(msg.sender, amount);
+        transferFrom(msg.sender, amount);
     }
 
     function withdraw(uint amount) public{
@@ -66,7 +63,7 @@ contract voteDAO { //is ERC20 {
 
         if (amount <= balances[msg.sender] - usedBalance) {
             balances[msg.sender] -= amount;
-            //transfer(msg.sender, amount);
+            transfer(msg.sender, amount);
         }
     }
 
@@ -79,8 +76,8 @@ contract voteDAO { //is ERC20 {
         minQuorum = _minQuorum;
     }
 
-    //function addProposal(address _recepient, string memory description, uint _supportPercent, bytes memory _transactionByteCode) external{
-    function addProposal(address _recepient, string description, uint _supportPercent, bytes _transactionByteCode) external{
+    function addProposal(address _recepient, string memory description, uint _supportPercent, bytes memory _transactionByteCode) external{
+    //function addProposal(address _recepient, string description, uint _supportPercent, bytes _transactionByteCode) external{
 
         Proposal newProposal = Proposal(false, false, 0, 0, 3 days, _supportPercent, description, _transactionByteCode, _recepient);
         proposals[index] = newProposal;
@@ -91,8 +88,7 @@ contract voteDAO { //is ERC20 {
 
     function vote(uint index_, bool supportAgainst) external{
 
-        if (index_ < index
-            && !proposals[index_].voteIsOver) {
+        if (index_ < index && !proposals[index_].voteIsOver) {
 
             if (balances[msg.sender] > 0) {
 
@@ -121,22 +117,6 @@ contract voteDAO { //is ERC20 {
         }
     }
 
-    function someFun(address addr) public {
-
-        //(bool success, ) = addr.call(proposals[index].transactionByteCode);
-       //(bool success1, ) = addr.call(abi.encodeWithSignature("someOtherFunction(uint256)", 123);
-        (bool success2, ) = addr.call(abi.encodeWithSignature("someOtherFunction(uint256)", 123));
-
-        //(bool success1, bytes data) = addr.call{value: msg.value, gas: 5000}(abi.encodeWithSignature("foo(string,uint256)", "call foo", 123));
-
-        //(bool success,  ) = addr.call{value: 1}(abi.encodeWithSignature("someOtherFunction(uint256)", 123));
-        
-    }
-    
-    function someOtherFunction(uint _myVar) public {
-        //do something
-    }
-
     function voteFinish(uint index_) external { // nonReentrant{
 
         if (index_ < index
@@ -149,22 +129,7 @@ contract voteDAO { //is ERC20 {
             uint totalSupportPercent = proposals[index_].voteSupport * 100 / proposals[index_].totalTokens;
 
             if (totalSupportPercent >= proposals[index_].supportPercent) {
-            //if (proposals[index_].minQuorumSupport <= proposals[index_].voteSupport) {
-
-                //proposals[index_].executeSuccessfully = true;
-                //proposals[index_].executeSuccessfully = proposals[index].recepient.call(proposals[index].transactionByteCode);
-                //proposals[index_].executeSuccessfully = proposals[index].recepient.
-                //proposals[index].recepient.cal(proposals[index].transactionByteCode);
-
-                //proposals[index_].executeSuccessfully = proposals[index].recepient.call{msg.value, 5000}(proposals[index].transactionByteCode);
-
-                //uint s = chairPerson.balance;
-                //uint v = chairPerson.call;
-                //bool a = chairPerson.call{}(proposals[index].transactionByteCode);
-                (bool success, )= proposals[index].recepient.call(proposals[index].transactionByteCode);
-                
-               
-
+                proposals[index_].executeSuccessfully = proposals[index_].recepient.call(proposals[index_].transactionByteCode);
             }
             
             emit EndingVote(msg.sender, proposals[index_].recepient, proposals[index_].desc, proposals[index_].executeSuccessfully);
