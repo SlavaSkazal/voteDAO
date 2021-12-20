@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
-//pragma ton-solidity ^0.47.0;
 
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-//import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract voteDAO is ERC20 {
     
@@ -14,11 +12,11 @@ contract voteDAO is ERC20 {
 
     struct Proposal {
         bool voteIsOver;
-        bool executeSuccessfully; //рез-т голосования
-        uint totalTokens; //всего внесено токенов в голосование
-        uint voteSupport; //сколько токенов внесено за
+        bool executeSuccessfully; 
+        uint totalTokens; 
+        uint voteSupport; 
         uint endTimeOfVote;
-        uint supportPercent; //процент проголосовавших за, необходимый для исполнения задуманного
+        uint supportPercent; 
         string desc;
         bytes transactionByteCode;
         address recepient;
@@ -77,7 +75,6 @@ contract voteDAO is ERC20 {
     }
 
     function addProposal(address _recepient, string memory description, uint _supportPercent, bytes memory _transactionByteCode) external{
-    //function addProposal(address _recepient, string description, uint _supportPercent, bytes _transactionByteCode) external{
 
         Proposal newProposal = Proposal(false, false, 0, 0, 3 days, _supportPercent, description, _transactionByteCode, _recepient);
         proposals[index] = newProposal;
@@ -117,7 +114,7 @@ contract voteDAO is ERC20 {
         }
     }
 
-    function voteFinish(uint index_) external { // nonReentrant{
+    function voteFinish(uint index_) external {
 
         if (index_ < index
             && !proposals[index_].voteIsOver
